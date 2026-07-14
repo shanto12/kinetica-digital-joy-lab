@@ -178,6 +178,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  min-height: 44px;
   font-family: var(--font-display), sans-serif;
   font-size: 1.05rem;
   font-weight: 800;
@@ -202,6 +203,14 @@ a {
 .desktop-nav a,
 .motion-toggle {
   position: relative;
+}
+
+.desktop-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .desktop-nav a::after {
