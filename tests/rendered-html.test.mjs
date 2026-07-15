@@ -39,6 +39,37 @@ test("ships production metadata and bespoke social imagery", async () => {
   await access(new URL("../public/og.png", import.meta.url));
 });
 
+test("publishes crawl guidance and the canonical production URL", async () => {
+  const [robotsResponse, sitemapResponse] = await Promise.all([
+    render("/robots.txt"),
+    render("/sitemap.xml"),
+  ]);
+
+  assert.equal(robotsResponse.status, 200);
+  assert.match(
+    robotsResponse.headers.get("content-type") ?? "",
+    /^text\/plain\b/i,
+  );
+  const robots = await robotsResponse.text();
+  assert.match(robots, /User-Agent:\s*\*/i);
+  assert.match(robots, /Allow:\s*\//i);
+  assert.match(
+    robots,
+    /Sitemap:\s*https:\/\/kinetica-digital-joy-lab\.netlify\.app\/sitemap\.xml/i,
+  );
+
+  assert.equal(sitemapResponse.status, 200);
+  assert.match(
+    sitemapResponse.headers.get("content-type") ?? "",
+    /^(?:application|text)\/xml\b/i,
+  );
+  const sitemap = await sitemapResponse.text();
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/kinetica-digital-joy-lab\.netlify\.app<\/loc>/i,
+  );
+});
+
 test("keeps the finished source free of starter artifacts and includes release hardening", async () => {
   const [page, layout, css, packageJson, netlify, nextConfig] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
